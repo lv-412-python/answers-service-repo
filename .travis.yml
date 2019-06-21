@@ -6,4 +6,4 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - pylint answers_service run.py
+  - pylint answers_service setup.py
