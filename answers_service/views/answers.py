@@ -18,6 +18,7 @@ class UserAnswer(Resource):
         :return json: new answer
         """
         req_data = request.get_json()
+        result = []
         for answer in req_data:
             reply = answer['reply']
             user_id = answer['user_id']
@@ -28,12 +29,13 @@ class UserAnswer(Resource):
                                                  field_id=field_id).first())
             if exists:
                 result = ({'error': 'this answer alreasy exist'}, 203)
+                break
             else:
                 new_answer = Answer(reply=reply, user_id=user_id, form_id=form_id,
                                     field_id=field_id, group_id=group_id)
                 DB.session.add(new_answer)  # pylint: disable=no-member
                 DB.session.commit()  # pylint: disable=no-member
-                result = 200
+                result.append(ANSWER_SCHEMA.dump(new_answer).data)
         return result
 
 
