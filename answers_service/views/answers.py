@@ -3,10 +3,10 @@ import requests
 from flask import request
 from flask_restful import Resource
 
-from config.base_config import Config
-from db import DB
-from models.answer import Answer
-from serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
+from answers_service.config.base_config import Config
+from answers_service.db import DB
+from answers_service.models.answer import Answer
+from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
 
 
 def get_field_title_by_id(result):
@@ -26,7 +26,6 @@ def get_field_title_by_id(result):
     # delete field_id and add field_title
     for i, _ in enumerate(result):
         field = result[i]["field_id"]
-        result[i].pop("field_id")
         result[i]["field_title"] = r_dict[str(field)]
     return result
 
