@@ -2,6 +2,7 @@
 import requests
 from flask import request
 from flask_restful import Resource
+from requests.exceptions import ConnectionError
 
 from answers_service.config.base_config import Config
 from answers_service.db import DB
@@ -21,7 +22,10 @@ def get_field_title_by_id(result):
         fields_id.add(int(field))
     # request titles based on needed fields_id
     fields_json = {'fields': list(fields_id)}
-    fields_request = requests.get(Config.FIELD_SERVICE_URL, json=fields_json)
+    try:
+        fields_request = requests.get(Config.FIELD_SERVICE_URL, json=fields_json)
+    except ConnectionError:
+        return {"error": "Fields service unavailable"}, 503
     r_dict = fields_request.json()
     # delete field_id and add field_title
     for i, _ in enumerate(result):
