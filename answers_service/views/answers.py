@@ -1,10 +1,6 @@
 """ methods classes """
-import requests
-from flask import request, jsonify
+from flask import request
 from flask_restful import Resource
-from requests.exceptions import ConnectionError
-
-from answers_service.config.base_config import Config
 from answers_service.db import DB
 from answers_service.models.answer import Answer
 from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
