@@ -1,6 +1,6 @@
 """ methods classes """
 import requests
-from flask import request
+from flask import request, jsonify
 from flask_restful import Resource
 from requests.exceptions import ConnectionError
 
@@ -10,30 +10,6 @@ from answers_service.models.answer import Answer
 from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
 
 
-def get_field_title_by_id(result):
-    """changes field_id to field_title
-    :param result: list: result of sqlalchemy query
-    :return dict
-    """
-    # creates set of fields_id
-    fields_id = set()
-    for i, _ in enumerate(result):
-        field = result[i]["field_id"]
-        fields_id.add(int(field))
-    # request titles based on needed fields_id
-    fields_json = {'fields': list(fields_id)}
-    try:
-        fields_request = requests.get(Config.FIELD_SERVICE_URL, json=fields_json)
-    except ConnectionError:
-        return {"error": "Fields service unavailable"}, 503
-    r_dict = fields_request.json()
-    # delete field_id and add field_title
-    for i, _ in enumerate(result):
-        field = result[i]["field_id"]
-        result[i]["field_title"] = r_dict[str(field)]
-    return result
-
-
 class UserAnswer(Resource):
     """User answers"""
 
@@ -41,23 +17,23 @@ class UserAnswer(Resource):
         """creates new answer
         :return json: new answer
         """
-        reply = request.json['reply']
-        user_id = request.json['user_id']
-        form_id = request.json['form_id']
-        field_id = request.json['field_id']
-        group_id = request.json['group_id']
-
-        # check if such answer exists
-        exists = bool(Answer.query.filter_by(user_id=user_id, form_id=form_id,
-                                             group_id=group_id, field_id=field_id).first())
-        if exists:
-            result = ({'error': 'this answer alreasy exist'}, 203)
-        else:
-            new_answer = Answer(reply=reply, user_id=user_id, form_id=form_id,
-                                field_id=field_id, group_id=group_id)
-            DB.session.add(new_answer)  # pylint: disable=no-member
-            DB.session.commit()  # pylint: disable=no-member
-            result = ANSWER_SCHEMA.jsonify(new_answer)
+        req_data = request.get_json()
+        for answer in req_data:
+            reply = answer['reply']
+            user_id = answer['user_id']
+            form_id = answer['form_id']
+            field_id = answer['field_id']
+            group_id = answer['group_id']
+            exists = bool(Answer.query.filter_by(user_id=user_id, form_id=form_id,
+                                                 field_id=field_id).first())
+            if exists:
+                result = ({'error': 'this answer alreasy exist'}, 203)
+            else:
+                new_answer = Answer(reply=reply, user_id=user_id, form_id=form_id,
+                                    field_id=field_id, group_id=group_id)
+                DB.session.add(new_answer)  # pylint: disable=no-member
+                DB.session.commit()  # pylint: disable=no-member
+                result = 200
         return result
 
 
@@ -72,8 +48,7 @@ class GroupAnswers(Resource):
         """
         group_answers = Answer.query.filter_by(form_id=form_id, group_id=group_id)
         result = ANSWERS_SCHEMA.dump(group_answers).data
-        response = get_field_title_by_id(result)
-        return response if response != [] else {"error": "no such row"}
+        return result if result != [] else {"error": "no such row"}
 
 
 class FormAnswers(Resource):
@@ -85,5 +60,4 @@ class FormAnswers(Resource):
         """get method"""
         form_answers = Answer.query.filter_by(form_id=form_id)
         result = ANSWERS_SCHEMA.dump(form_answers).data
-        response = get_field_title_by_id(result)
-        return response if response != [] else {"error": "no such row"}
+        return result if result != [] else {"error": "no such row"}

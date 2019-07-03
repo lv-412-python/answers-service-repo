@@ -1,13 +1,12 @@
-.PHONY: help install clear lint run-dev run-prod
-#SHELL := /bin/bash
+.PHONY: help install clear lint dev-env prod-env
 PYTHON_PATH_ANSWERS_SERVICE := /home/lev/project/4m/4m-answers-service/answers_service
 .DEFAULT: help
 help:
 	@echo "make install"
 	@echo "       creates venv and installs requirements"
-	@echo "make run-dev"
+	@echo "make dev-env"
 	@echo "       run project in dev mode"
-	@echo "make run-prod"
+	@echo "make prod-env"
 	@echo "       run project in production mode"
 	@echo "make lint"
 	@echo "       run pylint"
