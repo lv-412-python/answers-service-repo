@@ -21,8 +21,8 @@ class UserAnswer(Resource):
             form_id = answer['form_id']
             field_id = answer['field_id']
             group_id = answer['group_id']
-            exists = bool(Answer.query.filter_by(user_id=user_id, form_id=form_id,
-                                                 field_id=field_id).first())
+            exists = Answer.query.filter_by(user_id=user_id, form_id=form_id,
+                                            field_id=field_id).first()
             if exists:
                 result = ({'error': 'this answer alreasy exist'}, 203)
                 break
