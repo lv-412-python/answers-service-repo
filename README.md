@@ -23,7 +23,10 @@ postgres=# CREATE DATABASE your_custom_db_name;
 
 postgres=# \q
 ```
-
+```
+sudo apt-get install python3-pip
+sudo pip3 install virtualenv 
+```
 
 ### In the project root create venv and install requirements with Make
 
