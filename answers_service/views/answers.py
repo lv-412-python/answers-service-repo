@@ -1,10 +1,10 @@
 """ methods classes """
-from flask import request
+from sqlalchemy.exc import OperationalError, DataError
+from flask import request, jsonify
 from flask_restful import Resource
 from answers_service.db import DB
 from answers_service.models.answer import Answer
 from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
-
 
 class UserAnswer(Resource):
     """User answers"""
@@ -21,8 +21,12 @@ class UserAnswer(Resource):
             form_id = answer['form_id']
             field_id = answer['field_id']
             group_id = answer['group_id']
-            exists = Answer.query.filter_by(user_id=user_id, form_id=form_id,
-                                            field_id=field_id).first()
+            try:
+                exists = Answer.query.filter_by(user_id=user_id, form_id=form_id,
+                                                field_id=field_id).first()
+            except DataError:
+                return jsonify({'error': "input data not valid"}), 400
+
             if exists:
                 result = ({'error': 'this answer alreasy exist'}, 203)
                 break
@@ -30,8 +34,11 @@ class UserAnswer(Resource):
                 new_answer = Answer(reply=reply, user_id=user_id, form_id=form_id,
                                     field_id=field_id, group_id=group_id)
                 DB.session.add(new_answer)  # pylint: disable=no-member
-                DB.session.commit()  # pylint: disable=no-member
-                result.append(ANSWER_SCHEMA.dump(new_answer).data)
+                try:
+                    DB.session.commit()  # pylint: disable=no-member
+                    result.append(ANSWER_SCHEMA.dump(new_answer).data)
+                except OperationalError:
+                    result = {'error': 'database is not responding'}, 400
         return result
 
 
@@ -44,9 +51,15 @@ class GroupAnswers(Resource):
         :param group_id: int: group_id
         :return json: group answers
         """
-        group_answers = Answer.query.filter_by(form_id=form_id, group_id=group_id)
-        result = ANSWERS_SCHEMA.dump(group_answers).data
-        return result if result != [] else {"error": "no such row"}
+        if form_id.isnumeric() and group_id.isnumeric():
+            try:
+                group_answers = Answer.query.filter_by(form_id=form_id, group_id=group_id)
+            except OperationalError:
+                return {'error': 'database is not responding'}
+            result = ANSWERS_SCHEMA.dump(group_answers).data
+        else:
+            result = {'message': 'Not correct URL'}
+        return result if result else ({"error": "no such row"}, 404)
 
 
 class FormAnswers(Resource):
@@ -56,6 +69,12 @@ class FormAnswers(Resource):
 
     def get(self, form_id):  # pylint: disable=no-self-use
         """get method"""
-        form_answers = Answer.query.filter_by(form_id=form_id)
-        result = ANSWERS_SCHEMA.dump(form_answers).data
-        return result if result != [] else {"error": "no such row"}
+        if form_id.isnumeric():
+            try:
+                form_answers = Answer.query.filter_by(form_id=form_id)
+            except OperationalError:
+                return {'error': 'database is not responding'}, 400
+            result = ANSWERS_SCHEMA.dump(form_answers).data
+        else:
+            result = {'message': 'Not correct URL'}, 400
+        return result if result else ({"error": "no such row"}, 404)
