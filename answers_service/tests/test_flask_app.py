@@ -134,38 +134,37 @@ class PostAnswerTest(TestCase):
         with self.create_app().test_client() as client:
             response = client.post('/answers/new',
                                    json=[{
-                                          "group_id": 1,
-                                          "field_id": 1,
-                                          "reply": "AMAZING!",
-                                          "user_id": 1,
-                                          "form_id": 1
-                                         },
+                                       "group_id": 1,
+                                       "field_id": 1,
+                                       "reply": "AMAZING!",
+                                       "user_id": 1,
+                                       "form_id": 1},
                                          {
-                                          "group_id": 1,
-                                          "field_id": 1,
-                                          "reply": "AMAZING!",
-                                          "user_id": 2,
-                                          "form_id": 1
-                                         }])
+                                        "group_id": 1,
+                                        "field_id": 1,
+                                        "reply": "AMAZING!",
+                                        "user_id": 2,
+                                        "form_id": 1
+                                        }])
             self.assertEqual(response.status_code, 200)
 
     def test_post_failure(self):
         """Tests post resource failure."""
         with self.create_app().test_client() as client:
             client.post('/answers/new', json=[{
-                                          "group_id": 1,
-                                          "field_id": 1,
-                                          "reply": "AMAZING!",
-                                          "user_id": 1,
-                                          "form_id": 1
-                                         },
-                                         {
-                                          "group_id": 1,
-                                          "field_id": 1,
-                                          "reply": "AMAZING!",
-                                          "user_id": 2,
-                                          "form_id": 1
-                                         }])
+                                        "group_id": 1,
+                                        "field_id": 1,
+                                        "reply": "AMAZING!",
+                                        "user_id": 1,
+                                        "form_id": 1
+                                        },
+                                        {
+                                        "group_id": 1,
+                                        "field_id": 1,
+                                        "reply": "AMAZING!",
+                                        "user_id": 2,
+                                        "form_id": 1
+                                        }])
             response = client.post('/answers/new',
                                    json=[{
                                        "group_id": 1,
@@ -173,14 +172,14 @@ class PostAnswerTest(TestCase):
                                        "reply": "AMAZING!",
                                        "user_id": 1,
                                        "form_id": 1
-                                   },
-                                       {
-                                           "group_id": 1,
-                                           "field_id": 1,
-                                           "reply": "AMAZING!",
-                                           "user_id": 2,
-                                           "form_id": 1
-                                       }])
+                                        },
+                                        {
+                                        "group_id": 1,
+                                        "field_id": 1,
+                                        "reply": "AMAZING!",
+                                        "user_id": 2,
+                                        "form_id": 1
+                                        }])
             self.assertEqual(response.json, {"error": "this answer alreasy exist"})
             self.assertEqual(response.status_code, 203)
 

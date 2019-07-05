@@ -2,7 +2,7 @@
 from answers_service.config.base_config import Config
 
 
-class TestConfiguration(Config):
+class TestConfiguration(Config): # pylint: disable=too-few-public-methods
     """Testing configuration."""
     DEBUG = True
     TESTING = True
