@@ -3,7 +3,7 @@ from flask import request
 from flask_api import status
 from flask_restful import Resource
 from marshmallow import ValidationError
-from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy.exc import IntegrityError
 
 from answers_service.db import DB
 from answers_service.models.answer import Answer
@@ -51,13 +51,10 @@ class GroupAnswers(Resource):
         :return json: group answers
         """
         if form_id.isnumeric() and group_id.isnumeric():
-            try:
-                group_answers = Answer.query.filter_by(form_id=form_id, group_id=group_id)
-            except OperationalError:
-                return {'error': 'database is not responding'}
+            group_answers = Answer.query.filter_by(form_id=form_id, group_id=group_id)
             result = ANSWERS_SCHEMA.dump(group_answers).data
         else:
-            result = {'message': 'Not correct URL'}
+            result = {'message': 'Not correct URL'}, status.HTTP_400_BAD_REQUEST
         return result if result else ({"error": "no such row"}, status.HTTP_404_NOT_FOUND)
 
 

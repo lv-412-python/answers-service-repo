@@ -1,5 +1,5 @@
 .PHONY: help install clear lint dev-env prod-env
-PYTHON_PATH_ANSWERS_SERVICE := /home/lev/project/4m/4m-answers-service/answers_service
+PYTHON_PATH_ANSWERS_SERVICE :=  answers_service
 .DEFAULT: help
 help:
 	@echo "make install"
@@ -15,25 +15,25 @@ help:
 
 install:
 	python3 -m venv venv
-	. /home/lev/project/4m/4m-answers-service/venv/bin/activate; \
-	pip install setuptools --upgrade --ignore-installed --user
-	pip install pip --upgrade --ignore-installed --user
-	pip install -r requirements.txt --user;
+	. venv/bin/activate; \
+	pip install setuptools --upgrade; \
+	pip install pip --upgrade; \
+	pip install -r requirements.txt;
 
 clear:
 	rm -rf venv
 	find -iname "*.pyc" -delete
 
 dev-env:
-	 make install; \
-	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE);\
+	 . venv/bin/activate; \
+	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE); \
 	 export FLASK_APP="setup.py"; \
 	 export FLASK_ENV="development"; \
 	 flask run --port=5000;
 
 
 prod-env:
-	 make install; \
+	 . venv/bin/activate; \
 	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE); \
 	 export FLASK_APP="setup.py"; \
 	 export FLASK_ENV="production"; \
