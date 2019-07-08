@@ -1,10 +1,12 @@
 """Tests for form service."""
 from unittest import main
+
 from flask_testing import TestCase
+
 from answers_service import APP
+from answers_service.config.test_config import TestConfiguration
 from answers_service.db import DB
 from answers_service.models.answer import Answer
-from answers_service.config.test_config import TestConfiguration
 
 
 def create_app(config_obj):
@@ -20,6 +22,7 @@ def create_app(config_obj):
 
 class FormAnswersTest(TestCase):
     """Tests for get resource."""
+
     def create_app(self):
         """
         Creates Flask app with Test Configuration.
@@ -68,6 +71,7 @@ class FormAnswersTest(TestCase):
 
 class GroupAnswersTest(TestCase):
     """Tests for get group answers"""
+
     def create_app(self):
         """
         Creates Flask app with Test Configuration.
@@ -118,6 +122,7 @@ class GroupAnswersTest(TestCase):
 
 class PostAnswerTest(TestCase):
     """Tests for get group answers"""
+
     def create_app(self):
         """
         Creates Flask app with Test Configuration.
@@ -139,32 +144,32 @@ class PostAnswerTest(TestCase):
                                        "reply": "AMAZING!",
                                        "user_id": 1,
                                        "form_id": 1},
-                                         {
-                                        "group_id": 1,
-                                        "field_id": 1,
-                                        "reply": "AMAZING!",
-                                        "user_id": 2,
-                                        "form_id": 1
-                                        }])
+                                       {
+                                           "group_id": 1,
+                                           "field_id": 1,
+                                           "reply": "AMAZING!",
+                                           "user_id": 2,
+                                           "form_id": 1
+                                       }])
             self.assertEqual(response.status_code, 200)
 
     def test_post_failure(self):
         """Tests post resource failure."""
         with self.create_app().test_client() as client:
             client.post('/answers/new', json=[{
-                                        "group_id": 1,
-                                        "field_id": 1,
-                                        "reply": "AMAZING!",
-                                        "user_id": 1,
-                                        "form_id": 1
-                                        },
-                                        {
-                                        "group_id": 1,
-                                        "field_id": 1,
-                                        "reply": "AMAZING!",
-                                        "user_id": 2,
-                                        "form_id": 1
-                                        }])
+                "group_id": 1,
+                "field_id": 1,
+                "reply": "AMAZING!",
+                "user_id": 1,
+                "form_id": 1
+            },
+                {
+                    "group_id": 1,
+                    "field_id": 1,
+                    "reply": "AMAZING!",
+                    "user_id": 2,
+                    "form_id": 1
+                }])
             response = client.post('/answers/new',
                                    json=[{
                                        "group_id": 1,
@@ -172,14 +177,14 @@ class PostAnswerTest(TestCase):
                                        "reply": "AMAZING!",
                                        "user_id": 1,
                                        "form_id": 1
-                                        },
-                                        {
-                                        "group_id": 1,
-                                        "field_id": 1,
-                                        "reply": "AMAZING!",
-                                        "user_id": 2,
-                                        "form_id": 1
-                                        }])
+                                   },
+                                       {
+                                           "group_id": 1,
+                                           "field_id": 1,
+                                           "reply": "AMAZING!",
+                                           "user_id": 2,
+                                           "form_id": 1
+                                       }])
             self.assertEqual(response.json, {"error": "this answer alreasy exist"})
             self.assertEqual(response.status_code, 203)
 
@@ -187,6 +192,7 @@ class PostAnswerTest(TestCase):
         """Drops all tables."""
         DB.session.remove()
         DB.drop_all()
+
 
 if __name__ == '__main__':
     main()
