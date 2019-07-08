@@ -1,10 +1,14 @@
 """ methods classes """
-from sqlalchemy.exc import OperationalError, DataError
-from flask import request, jsonify
+from flask import request
+from flask_api import status
 from flask_restful import Resource
+from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError, OperationalError
+
 from answers_service.db import DB
 from answers_service.models.answer import Answer
 from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
+
 
 class UserAnswer(Resource):
     """User answers"""
@@ -13,32 +17,27 @@ class UserAnswer(Resource):
         """creates new answer
         :return json: new answer
         """
-        req_data = request.get_json()
         result = []
-        for answer in req_data:
-            reply = answer['reply']
-            user_id = answer['user_id']
-            form_id = answer['form_id']
-            field_id = answer['field_id']
-            group_id = answer['group_id']
+        for answer in request.get_json():
             try:
-                exists = Answer.query.filter_by(user_id=user_id, form_id=form_id,
-                                                field_id=field_id).first()
-            except DataError:
-                return jsonify({'error': "input data not valid"}), 400
+                new_answer = ANSWER_SCHEMA.load(answer).data
+            except ValidationError as err:
+                return err.messages, status.HTTP_400_BAD_REQUEST
 
-            if exists:
-                result = ({'error': 'this answer alreasy exist'}, 203)
-                break
-            else:
-                new_answer = Answer(reply=reply, user_id=user_id, form_id=form_id,
-                                    field_id=field_id, group_id=group_id)
-                DB.session.add(new_answer)  # pylint: disable=no-member
-                try:
-                    DB.session.commit()  # pylint: disable=no-member
-                    result.append(ANSWER_SCHEMA.dump(new_answer).data)
-                except OperationalError:
-                    result = {'error': 'database is not responding'}, 400
+            add_new_answer = Answer(
+                reply=new_answer['reply'],
+                user_id=new_answer['user_id'],
+                form_id=new_answer['form_id'],
+                field_id=new_answer['field_id'],
+                group_id=new_answer['group_id']
+            )
+            DB.session.add(add_new_answer)
+            try:
+                DB.session.commit()
+                result.append(ANSWER_SCHEMA.dump(new_answer).data)
+            except IntegrityError as err:
+                DB.session.rollback()
+                return {'error': '{} already exist'.format(new_answer)}, status.HTTP_400_BAD_REQUEST
         return result
 
 
@@ -59,7 +58,7 @@ class GroupAnswers(Resource):
             result = ANSWERS_SCHEMA.dump(group_answers).data
         else:
             result = {'message': 'Not correct URL'}
-        return result if result else ({"error": "no such row"}, 404)
+        return result if result else ({"error": "no such row"}, status.HTTP_404_NOT_FOUND)
 
 
 class FormAnswers(Resource):
@@ -70,11 +69,8 @@ class FormAnswers(Resource):
     def get(self, form_id):  # pylint: disable=no-self-use
         """get method"""
         if form_id.isnumeric():
-            try:
-                form_answers = Answer.query.filter_by(form_id=form_id)
-            except OperationalError:
-                return {'error': 'database is not responding'}, 400
+            form_answers = Answer.query.filter_by(form_id=form_id)
             result = ANSWERS_SCHEMA.dump(form_answers).data
         else:
-            result = {'message': 'Not correct URL'}, 400
-        return result if result else ({"error": "no such row"}, 404)
+            result = {'message': 'Not correct URL'}, status.HTTP_400_BAD_REQUEST
+        return result if result else ({"error": "no such row"}, status.HTTP_404_NOT_FOUND)

@@ -1,12 +1,17 @@
 """ marshmello app schema """
+from marshmallow import fields
+
 from answers_service import MA
+
 
 # answer schema
 class AnswerSchema(MA.Schema):
     """ output schema """
-    class Meta:  # pylint: disable=too-few-public-methods
-        """ output """
-        fields = ('reply', 'user_id', 'form_id', 'field_id', 'group_id')
+    reply = fields.Str()
+    user_id = fields.Integer()
+    form_id = fields.Integer()
+    field_id = fields.Integer()
+    group_id = fields.Integer()
 
 
 # init answer schema
