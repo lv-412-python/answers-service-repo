@@ -40,4 +40,5 @@ prod-env:
 	 flask run --port=5000;
 
 lint:
+	. venv/bin/activate; \
 	pylint setup.py answers_service/
