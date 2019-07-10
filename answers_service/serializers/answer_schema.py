@@ -6,7 +6,7 @@ from answers_service import MA
 
 # answer schema
 class AnswerSchema(MA.Schema):
-    """ output schema """
+    """output schema."""
     reply = fields.Str()
     user_id = fields.Integer()
     form_id = fields.Integer()

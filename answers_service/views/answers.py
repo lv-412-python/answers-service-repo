@@ -1,4 +1,5 @@
 """ methods classes """
+from urllib.parse import urlparse
 from flask import request
 from flask_api import status
 from flask_restful import Resource, HTTPException
@@ -14,7 +15,7 @@ class UserAnswer(Resource):
     """User answers"""
 
     def post(self):  # pylint: disable=no-self-use
-        """creates new answer
+        """creates new answer.
         :return json: new answer
         """
         result = []
@@ -31,12 +32,13 @@ class UserAnswer(Resource):
             except IntegrityError:
                 DB.session.rollback()
                 return {'error': '{} already exist'.format(new_answer)}, status.HTTP_400_BAD_REQUEST
-        return result
+        return result, status.HTTP_201_CREATED
 
 
     def get(self):  # pylint: disable=no-self-use
-        """gets all answers of the form
+        """gets all answers of the form.
         :return json: answers"""
+        print('\n\n*******************', request.url, '\n**********************\n')
         try:
             form_id = request.args['form_id']
         except HTTPException:

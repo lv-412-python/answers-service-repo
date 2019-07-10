@@ -7,7 +7,7 @@ from answers_service.db import DB
 
 
 class Answer(DB.Model):  # pylint: disable=too-few-public-methods
-    """ models """
+    """models."""
     reply = Column(String(200), nullable=False)
     user_id = Column(Integer(), nullable=False)
     form_id = Column(Integer(), nullable=False)
