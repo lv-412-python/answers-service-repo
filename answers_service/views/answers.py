@@ -2,8 +2,9 @@
 from flask import request
 from flask_api import status
 from flask_restful import Resource, HTTPException
-from marshmallow import ValidationError
+from marshmallow import ValidationError, fields
 from sqlalchemy.exc import IntegrityError
+from webargs.flaskparser import parser
 
 from answers_service.db import DB
 from answers_service.models.answer import Answer
@@ -14,7 +15,7 @@ class UserAnswer(Resource):
     """User answers"""
 
     def post(self):  # pylint: disable=no-self-use
-        """creates new answer
+        """creates new answer.
         :return json: new answer
         """
         result = []
@@ -31,25 +32,27 @@ class UserAnswer(Resource):
             except IntegrityError:
                 DB.session.rollback()
                 return {'error': '{} already exist'.format(new_answer)}, status.HTTP_400_BAD_REQUEST
-        return result
-
+        return result, status.HTTP_201_CREATED
 
     def get(self):  # pylint: disable=no-self-use
-        """gets all answers of the form
+        """gets all answers of the form.
         :return json: answers"""
+        url_args = {
+            'form_id': fields.Int(required=True, validate=lambda val: val > 0),
+            'group_id': fields.List(fields.Int(validate=lambda val: val > 0)),
+            'from_date': fields.Date(),
+            'end_date': fields.Date()
+        }
         try:
-            form_id = request.args['form_id']
+            args = parser.parse(url_args, request)
         except HTTPException:
-            return {'message': 'form_id is not passed'}, status.HTTP_400_BAD_REQUEST
-        group_id = request.args.getlist('group_id', type=int)
-        from_date = request.args.get('from_date')
-        end_date = request.args.get('end_date')
-        form_answers = Answer.query.filter(Answer.form_id == form_id)
-        if from_date:
-            form_answers = form_answers.filter(Answer.answer_date >= from_date)
-        if end_date:
-            form_answers = form_answers.filter(Answer.answer_date <= end_date)
-        if group_id:
-            form_answers = form_answers.filter(Answer.group_id.in_(group_id))
+            return {"error": "not correct URL"}, status.HTTP_400_BAD_REQUEST
+        form_answers = Answer.query.filter(Answer.form_id == args['form_id'])
+        if 'from_date' in args:
+            form_answers = form_answers.filter(Answer.answer_date >= args['from_date'])
+        if 'end_date' in args:
+            form_answers = form_answers.filter(Answer.answer_date <= args['end_date'])
+        if 'group_id' in args:
+            form_answers = form_answers.filter(Answer.group_id.in_(args['group_id']))
         result = ANSWERS_SCHEMA.dump(form_answers).data
         return result if result else ({"error": "no such row"}, status.HTTP_404_NOT_FOUND)

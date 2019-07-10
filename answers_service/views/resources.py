@@ -1,5 +1,5 @@
 # pylint: disable=cyclic-import
-"""API routes"""
+"""API routes."""
 from answers_service import API
 from .answers import UserAnswer
 

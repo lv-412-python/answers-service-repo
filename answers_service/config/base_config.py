@@ -1,10 +1,8 @@
-"""config"""
+"""config."""
 
 
 class Config:  # pylint: disable=too-few-public-methods
-    """
-        Implementation of Configuration class
-    """
+    """Implementation of Configuration class."""
     DEBUG = False
     TESTING = False
     SECRET_KEY = '3wffe3423@#Rr23krpo43o4t'
