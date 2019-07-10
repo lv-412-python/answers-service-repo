@@ -1,4 +1,4 @@
-""" methods classes """
+"""methods classes."""
 from flask import request
 from flask_api import status
 from flask_restful import Resource, HTTPException
@@ -12,8 +12,7 @@ from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCH
 
 
 class UserAnswer(Resource):
-    """User answers"""
-
+    """User answers."""
     def post(self):  # pylint: disable=no-self-use
         """creates new answer.
         :return json: new answer

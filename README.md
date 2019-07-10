@@ -1,4 +1,4 @@
-# Answers service [![Build Status](https://travis-ci.org/lv-412-python/4m-answers-service.svg?branch=develop)](https://travis-ci.org/lv-412-python/4m-answers-service) 
+# Answers service [![Build Status](https://travis-ci.org/lv-412-python/answers-service-repo.svg?branch=develop)](https://travis-ci.org/lv-412-python/answers-service-repo) 
 ## Description
 This is the source code of the answers service, part of 4m project. This service stores and output answers on the Web page
 
@@ -29,12 +29,8 @@ sudo pip3 install virtualenv
 ```
 
 ### In the project root create venv and install requirements with Make
-
 ```
-export PYTHONPATH=$PYTHONPATH:/home/.../.../4m-answers-service/answers-service
-```
-```
-make dev-env
+make install
 ```
 #### in case of failure:
 ```
