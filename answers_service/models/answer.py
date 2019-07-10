@@ -1,4 +1,4 @@
-""" answers service model """
+"""answers service model."""
 import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, PrimaryKeyConstraint
