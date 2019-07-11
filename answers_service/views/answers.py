@@ -13,7 +13,7 @@ from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCH
 
 class UserAnswer(Resource):
     """User answers."""
-    def post(self):  # pylint: disable=no-self-use
+    def post(self):
         """creates new answer.
         :return json: new answer
         """
@@ -33,7 +33,7 @@ class UserAnswer(Resource):
                 return {'error': '{} already exist'.format(new_answer)}, status.HTTP_400_BAD_REQUEST
         return result, status.HTTP_201_CREATED
 
-    def get(self):  # pylint: disable=no-self-use
+    def get(self):
         """gets all answers of the form.
         :return json: answers"""
         url_args = {

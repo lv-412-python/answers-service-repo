@@ -1,7 +1,7 @@
 """config."""
 
 
-class Config:  # pylint: disable=too-few-public-methods
+class Config:
     """Implementation of Configuration class."""
     DEBUG = False
     TESTING = False
