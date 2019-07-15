@@ -20,7 +20,7 @@ def create_app(config_obj):
     return app
 
 
-class FormAnswersTest(TestCase):
+class UserAnswersTest(TestCase):
     """Tests for get resource."""
 
     def create_app(self):
