@@ -6,6 +6,7 @@ from marshmallow import ValidationError, fields
 from sqlalchemy.exc import IntegrityError
 from webargs.flaskparser import parser
 
+from answers_service import APP
 from answers_service.db import DB
 from answers_service.models.answer import Answer
 from answers_service.serializers.answer_schema import ANSWERS_SCHEMA, ANSWER_SCHEMA
@@ -22,6 +23,7 @@ class UserAnswer(Resource):
             try:
                 new_answer = ANSWER_SCHEMA.load(answer).data
             except ValidationError as err:
+                APP.logger.error('invalid input')
                 return err.messages, status.HTTP_400_BAD_REQUEST
             add_new_answer = Answer(**new_answer)
             DB.session.add(add_new_answer)
@@ -29,6 +31,7 @@ class UserAnswer(Resource):
                 DB.session.commit()
                 result.append(ANSWER_SCHEMA.dump(new_answer).data)
             except IntegrityError:
+                APP.logger.error('%s already exist', answer)
                 DB.session.rollback()
                 return {'error': '{} already exist'.format(new_answer)}, status.HTTP_400_BAD_REQUEST
         return result, status.HTTP_201_CREATED
@@ -45,6 +48,7 @@ class UserAnswer(Resource):
         try:
             args = parser.parse(url_args, request)
         except HTTPException:
+            APP.logger.error('%s not correct URL', request.url)
             return {"error": "not correct URL"}, status.HTTP_400_BAD_REQUEST
         form_answers = Answer.query.filter(Answer.form_id == args['form_id'])
         if 'from_date' in args:
