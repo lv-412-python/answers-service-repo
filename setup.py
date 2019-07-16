@@ -6,4 +6,4 @@ if __name__ == '__main__':
         from logging.config import fileConfig
 
         fileConfig('logging.config')
-    APP.run()
+    APP.run(host='0.0.0.0')
