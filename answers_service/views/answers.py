@@ -1,5 +1,5 @@
 """methods classes."""
-from flask import request
+from flask import request, Response
 from flask_api import status
 from flask_restful import Resource, HTTPException
 from marshmallow import ValidationError, fields
@@ -18,7 +18,6 @@ class UserAnswer(Resource):
         """creates new answer.
         :return json: new answer
         """
-        result = []
         for answer in request.get_json():
             try:
                 new_answer = ANSWER_SCHEMA.load(answer).data
@@ -29,12 +28,11 @@ class UserAnswer(Resource):
             DB.session.add(add_new_answer)
             try:
                 DB.session.commit()
-                result.append(ANSWER_SCHEMA.dump(new_answer).data)
             except IntegrityError:
-                APP.logger.error('%s already exist', answer)
+                APP.logger.error('%s already exist.', answer)
                 DB.session.rollback()
-                return {'error': '{} already exist'.format(new_answer)}, status.HTTP_400_BAD_REQUEST
-        return result, status.HTTP_201_CREATED
+                return {'error': 'Already exists.'}, status.HTTP_400_BAD_REQUEST
+        return Response(status=status.HTTP_201_CREATED)
 
     def get(self):
         """gets all answers of the form.

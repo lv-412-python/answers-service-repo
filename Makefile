@@ -1,12 +1,12 @@
-.PHONY: help install clear lint dev-env prod-env docker-install docker-run-dev docker-run-prod
+.PHONY: help install clear lint run-dev-mode run-prod-mode docker-install
 PYTHON_PATH_ANSWERS_SERVICE :=  answers_service
 .DEFAULT: help
 help:
 	@echo "make install"
 	@echo "       creates venv and installs requirements"
-	@echo "make dev-env"
+	@echo "make run-dev-mode"
 	@echo "       run project in dev mode"
-	@echo "make prod-env"
+	@echo "make run-prod-mode"
 	@echo "       run project in production mode"
 	@echo "make lint"
 	@echo "       run pylint"
@@ -28,35 +28,21 @@ clear:
 	rm -rf venv
 	find -iname "*.pyc" -delete
 
-docker-run-prod:
-	 export LC_ALL=C.UTF-8;\
-	 export LANG=C.UTF-8;\
-	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE); \
-	 export FLASK_APP="setup.py"; \
-	 export FLASK_ENV="production"; \
-	 flask run --port=5000;
 
-docker-run-dev:
-	 export LC_ALL=C.UTF-8;\
-	 export LANG=C.UTF-8;\
-	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE); \
-	 export FLASK_APP="setup.py"; \
-	 export FLASK_ENV="development"; \
-	 flask run --port=5000;
 
-dev-env:
+run-dev-mode:
 	 . venv/bin/activate; \
 	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE); \
 	 export FLASK_APP="setup.py"; \
 	 export FLASK_ENV="development"; \
 	 flask run --port=5001;
 
-prod-env:
+run-prod-mode:
 	 . venv/bin/activate; \
 	 export PYTHONPATH=$(PYTHON_PATH_ANSWERS_SERVICE); \
 	 export FLASK_APP="setup.py"; \
 	 export FLASK_ENV="production"; \
-	 flask run --port=5000;
+	 flask run --port=5001;
 
 lint:
 	. venv/bin/activate; \

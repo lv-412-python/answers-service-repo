@@ -8,6 +8,7 @@ omit =
     *setup.py*
     *__init__.py*
     *tests/*
+    */home/lev/Desktop/project/SSproject/answers-service-repo/venv*
 
 
 [report]
@@ -15,4 +16,4 @@ show_missing = True
 precision = 2
 
 [paths]
-source = /home/lev/project/4m/4m-answers-service/answers_service
+source = /home/lev/Desktop/project/SSproject/answers-service-repo/answers_service
