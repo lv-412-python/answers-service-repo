@@ -47,7 +47,7 @@ class UserAnswer(Resource):
             args = parser.parse(url_args, request)
         except HTTPException:
             APP.logger.error('%s not correct URL', request.url)
-            return {"error": "not correct URL"}, status.HTTP_400_BAD_REQUEST
+            return {"error": "Invalid URL."}, status.HTTP_400_BAD_REQUEST
         form_answers = Answer.query.filter(Answer.form_id == args['form_id'])
         if 'from_date' in args:
             form_answers = form_answers.filter(Answer.answer_date >= args['from_date'])
@@ -56,4 +56,4 @@ class UserAnswer(Resource):
         if 'group_id' in args:
             form_answers = form_answers.filter(Answer.group_id.in_(args['group_id']))
         result = ANSWERS_SCHEMA.dump(form_answers).data
-        return result or ({"error": "no such row"}, status.HTTP_404_NOT_FOUND)
+        return result or ({"error": "Does not exist."}, status.HTTP_400_BAD_REQUEST)
