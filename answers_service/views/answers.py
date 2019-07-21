@@ -48,7 +48,8 @@ class UserAnswer(Resource):
         except HTTPException:
             APP.logger.error('%s not correct URL', request.url)
             return {"error": "Invalid URL."}, status.HTTP_400_BAD_REQUEST
-        form_answers = Answer.query.filter(Answer.form_id == args['form_id'])
+        form_answers = Answer.query.filter(Answer.form_id == args['form_id'])\
+            .order_by(Answer.group_id)
         if 'from_date' in args:
             form_answers = form_answers.filter(Answer.answer_date >= args['from_date'])
         if 'end_date' in args:
