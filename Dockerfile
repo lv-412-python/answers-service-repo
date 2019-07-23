@@ -9,6 +9,8 @@ RUN apt update -y && \
 COPY ./ ./opt/answers-service-repo
 WORKDIR /opt/answers-service-repo
 
+EXPOSE 5050
+
 RUN make docker-install
 
 ENTRYPOINT ["python3"]
