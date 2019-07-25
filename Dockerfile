@@ -9,7 +9,7 @@ RUN apt update -y && \
 COPY ./ ./opt/answers-service-repo
 WORKDIR /opt/answers-service-repo
 
-RUN make docker-install
+RUN make install-requirements
 
 ENTRYPOINT ["python3"]
 CMD ["setup.py"]
