@@ -1,10 +1,10 @@
 """config."""
-
+LOCAL_DATABASE = 'postgres://postgres:postgres@localhost:5432/4m_answers'
+DOCKER_DB = 'postgres://postgres:mysecretpassword@db:5432/4m_answers'
 
 class Config:
     """Implementation of Configuration class."""
     DEBUG = False
     TESTING = False
-    SECRET_KEY = '3wffe3423@#Rr23krpo43o4t'
-    SQLALCHEMY_DATABASE_URI = 'postgres://postgres:mysecretpassword@172.17.0.2:5432/4m_answers'
+    SQLALCHEMY_DATABASE_URI = DOCKER_DB
     SQLALCHEMY_TRACK_MODIFICATIONS = True
