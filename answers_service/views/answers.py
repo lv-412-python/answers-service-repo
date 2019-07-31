@@ -57,5 +57,5 @@ class UserAnswer(Resource):
         if 'group_id' in args:
             form_answers = form_answers.filter(Answer.group_id.in_(args['group_id']))
         result = ANSWERS_SCHEMA.dump(form_answers).data
-        return (result, status.HTTP_200_OK) or\
-               ({"error": "Does not exist."}, status.HTTP_400_BAD_REQUEST)
+        return (result, status.HTTP_200_OK) if result else \
+               ({"error": "Does not exist."}, status.HTTP_404_NOT_FOUND)
