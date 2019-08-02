@@ -6,7 +6,7 @@ from flask_cors import CORS
 from answers_service.config.prod_config import ProductionConfig
 
 APP = Flask(__name__)
-CORS(APP)
+CORS(APP, supports_credentials=True)
 API = Api(APP)
 MA = Marshmallow(APP)
 

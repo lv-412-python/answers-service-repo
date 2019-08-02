@@ -10,7 +10,6 @@ class AnswerSchema(MA.Schema):
     user_id = fields.Integer()
     form_id = fields.Integer()
     field_id = fields.Integer()
-    group_id = fields.Integer()
 
 ANSWER_SCHEMA = AnswerSchema(strict=True)
 ANSWERS_SCHEMA = AnswerSchema(many=True, strict=True)
