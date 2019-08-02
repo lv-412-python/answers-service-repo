@@ -49,13 +49,13 @@ class UserAnswer(Resource):
             APP.logger.error('%s not correct URL', request.url)
             return {"error": "Invalid URL."}, status.HTTP_400_BAD_REQUEST
         form_answers = Answer.query.filter(Answer.form_id == args['form_id'])\
-            .order_by(Answer.group_id)
+            .order_by(Answer.field_id)
         if 'from_date' in args:
             form_answers = form_answers.filter(Answer.answer_date >= args['from_date'])
         if 'end_date' in args:
             form_answers = form_answers.filter(Answer.answer_date <= args['end_date'])
         if 'user_id' in args:
-            form_answers = form_answers.filter(Answer.group_id.in_(args['user_id']))
+            form_answers = form_answers.filter(Answer.user_id.in_(args['user_id']))
         result = ANSWERS_SCHEMA.dump(form_answers).data
         return (result, status.HTTP_200_OK) if result else \
                ({"error": "Does not exist."}, status.HTTP_404_NOT_FOUND)
