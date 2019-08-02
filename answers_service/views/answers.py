@@ -39,7 +39,7 @@ class UserAnswer(Resource):
         :return json: answers"""
         url_args = {
             'form_id': fields.Int(required=True, validate=lambda val: val > 0),
-            'group_id': fields.List(fields.Int(validate=lambda val: val > 0)),
+            'user_id': fields.List(fields.Int(validate=lambda val: val > 0)),
             'from_date': fields.Date(),
             'end_date': fields.Date()
         }
@@ -54,8 +54,8 @@ class UserAnswer(Resource):
             form_answers = form_answers.filter(Answer.answer_date >= args['from_date'])
         if 'end_date' in args:
             form_answers = form_answers.filter(Answer.answer_date <= args['end_date'])
-        if 'group_id' in args:
-            form_answers = form_answers.filter(Answer.group_id.in_(args['group_id']))
+        if 'user_id' in args:
+            form_answers = form_answers.filter(Answer.group_id.in_(args['user_id']))
         result = ANSWERS_SCHEMA.dump(form_answers).data
         return (result, status.HTTP_200_OK) if result else \
                ({"error": "Does not exist."}, status.HTTP_404_NOT_FOUND)

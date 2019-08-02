@@ -6,5 +6,5 @@ class Config:
     """Implementation of Configuration class."""
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = DOCKER_DB
+    SQLALCHEMY_DATABASE_URI = LOCAL_DATABASE
     SQLALCHEMY_TRACK_MODIFICATIONS = True

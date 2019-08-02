@@ -12,6 +12,5 @@ class Answer(DB.Model):
     user_id = Column(Integer(), nullable=False)
     form_id = Column(Integer(), nullable=False)
     field_id = Column(Integer(), nullable=False)
-    group_id = Column(Integer(), nullable=False)
     answer_date = Column(DateTime(), default=datetime.datetime.utcnow)
     __table_args__ = (PrimaryKeyConstraint('user_id', 'form_id', 'field_id', name='answer_pk'),)
