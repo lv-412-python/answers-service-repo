@@ -8,6 +8,9 @@ This is the source code of the answers service, part of 4m project. This service
 * PostgreSQL (10.8)
 * Docker
 
+## ER diagram
+![alt_text](diagrams/4m_answers.png)
+
 ## Install
 For the next steps of service installation, you will need setup of Ubuntu 18.04, and Docker
 
