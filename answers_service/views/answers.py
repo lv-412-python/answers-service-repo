@@ -57,7 +57,7 @@ class UserAnswer(Resource):
             form_answers = form_answers.filter(Answer.answer_date <= args['end_date'])
         if 'group_id' in args:
             groups = {'groups': args['group_id']}
-            get_groups = requests.get('http://0.0.0.0:5050/group', params=groups)
+            get_groups = requests.get('http://groups-service:5050/group', params=groups)
             group_members = []
             for group in get_groups.json():
                 group_members.extend(group['members'])
