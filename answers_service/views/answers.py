@@ -60,11 +60,19 @@ class UserAnswer(Resource):
             form_answers = form_answers.filter(Answer.user_id == args['user_id'])
         if 'group_id' in args:
             groups = {'group_id': args['group_id']}
-            get_groups = requests.get('http://groups-service:5050/group', params=groups)
+            # get_groups = requests.get('http://groups-service:5050/group', params=groups)
+            get_groups = requests.get('http://0.0.0.0:5000/group', params=groups)
             group_members = []
             for group in get_groups.json():
                 group_members.extend(group['members'])
             form_answers = form_answers.filter(Answer.user_id.in_(set(group_members)))
+            if '/statistic' in request.url_rule.rule:
+                users_to_answer = len(group_members)
+                answered = set()
+                result = ANSWERS_SCHEMA.dump(form_answers).data
+                for answer in result:
+                    answered.add(answer["user_id"])
+                return {"users": users_to_answer, "answered": len(answered)}
         result = ANSWERS_SCHEMA.dump(form_answers).data
         return (result, status.HTTP_200_OK) if result else \
                ({"error": "Does not exist."}, status.HTTP_404_NOT_FOUND)
