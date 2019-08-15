@@ -61,7 +61,9 @@ class UserAnswer(Resource):
         if 'group_id' in args:
             groups = {'group_id': args['group_id']}
             get_groups = requests.get('http://groups-service:5050/group', params=groups,
-                                      cookies={'session' :request.cookies.get('session')})
+                                      cookies={'session': request.cookies.get('session'),
+                                               'admin': request.cookies.get('admin')}
+                                      )
             group_members = []
             for group in get_groups.json():
                 group_members.extend(group['members'])
